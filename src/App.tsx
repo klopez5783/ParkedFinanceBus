@@ -12,13 +12,14 @@ interface Balances {
 }
 
 function App() {
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [showNewTransaction, setShowNewTransaction] = useState(false);
   const [balances, setBalances] = useState<Balances>({
     savings: 0,
     needs: 0,
     wants: 0,
   });
+  const [hasOpenedModal, setHasOpenedModal] = useState(false);
 
   function handleAllocation(newBalances: Balances) {
     setBalances(newBalances);
@@ -39,10 +40,12 @@ function App() {
       </h1>
       <div className="justify justify-end flex">
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {setShowModal(true)
+            if(!hasOpenedModal) setHasOpenedModal(true)
+          }}
           className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
         >
-          <span className="text-lg text-white">Edit Paycheck Allocation</span>
+          {hasOpenedModal ? "Edit Paycheck Allocation" : "New Paycheck Allocation"}
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
