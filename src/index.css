@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  /* =========================
+     CORE BACKGROUND COLORS
+  ========================== */
+
+  /* Main app background */
+  --color-background: #3c3744;
+
+  /* Cards, modals, panels */
+  --color-surface: #47414f;
+
+  /* Slightly elevated surfaces */
+  --color-surfaceLight: #4f4959;
+
+  /* =========================
+     BRAND / INTERACTIVE COLORS
+  ========================== */
+
+  /* Main CTA color */
+  --color-primary: #090c9b;
+
+  /* Hover states / secondary actions */
+  --color-secondary: #3066be;
+
+  /* Soft highlight backgrounds */
+  --color-accentSoft: rgba(48, 102, 190, 0.12);
+
+  /* =========================
+     TEXT COLORS
+  ========================== */
+
+  /* Main readable text */
+  --color-text: #fbfff1;
+
+  /* Subtitles / descriptions */
+  --color-subText: #b4c5e4;
+
+  /* Disabled / inactive text */
+  --color-mutedText: #8d97ab;
+
+  /* =========================
+     BORDER / UI COLORS
+  ========================== */
+
+  /* Subtle borders */
+  --color-border: rgba(180, 197, 228, 0.15);
+
+  /* Inputs / separators */
+  --color-divider: rgba(180, 197, 228, 0.08);
+
+  /* =========================
+     STATUS COLORS
+  ========================== */
+
+  --color-success: #3ba55d;
+  --color-warning: #e9a23b;
+  --color-danger: #d64550;
+}
