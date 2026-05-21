@@ -6,7 +6,7 @@ export default function BalancePill({
   amount: number;
 }) {
   return (
-    <div className="flex mt-4 justify-between items-center gap-1 bg-white rounded-full px-4 py-3 shadow-lg w-9/10">
+    <div className="flex mt-3 justify-between gap-1 bg-white rounded-full px-4 py-3 shadow-lg w-full">
       <span className="text-surfaceLight font-semibold uppercase tracking-widest text-gray-400 text-lg">
         {label}
       </span>
