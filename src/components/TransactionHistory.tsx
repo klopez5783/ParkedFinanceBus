@@ -59,8 +59,8 @@ const transactions = [
 
 export default function TransactionHistory() {
   return (
-    <div className="mt-6">
-      <h2 className="text-lg font-semibold text-text mb-3 px-1">
+    <div className="mt-4">
+      <h2 className="text-xl font-semibold text-text mb-3 px-1">
         Transaction History
       </h2>
       <div className="flex flex-col max-h-85 overflow-y-auto rounded-xl w-full">

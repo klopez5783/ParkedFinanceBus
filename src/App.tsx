@@ -1,22 +1,59 @@
+import { useState } from "react";
 import "./App.css";
 import BalancePill from "./components/BalancePill";
 import TransactionHistory from "./components/TransactionHistory";
+import PaycheckAllocationModal from "./components/PaycheckAllocationModal";
+import NewTransactionModal from "./Modals/NewTransactionModal";
+
+interface Balances {
+  savings: number;
+  needs: number;
+  wants: number;
+}
 
 function App() {
+  const [showModal, setShowModal] = useState(true);
+  const [showNewTransaction, setShowNewTransaction] = useState(false);
+  const [balances, setBalances] = useState<Balances>({
+    savings: 0,
+    needs: 0,
+    wants: 0,
+  });
+
+  function handleAllocation(newBalances: Balances) {
+    setBalances(newBalances);
+    setShowModal(false);
+  }
+
+  function handleTransactionSubmit() {
+    console.log("New transaction submitted");
+    setShowNewTransaction(false);
+  }
+
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
-        <h1 className="text-3xl font-bold text-text mb-2 text-center">
-          Budget Tracker
-        </h1>
-        <div className="flex flex-col items-center gap-4">
-          <BalancePill label="Savings 💰" amount={300} />
-          <BalancePill label="Needs 📝" amount={500} />
-          <BalancePill label="Wants 🛍️" amount={200} />
-        </div>
-        <button className="mt-4 w-full py-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-base text-xl shadow- active:opacity-80">
-          + New Transaction
+      {showModal && <PaycheckAllocationModal onSubmit={handleAllocation} />}
+      {showNewTransaction && <NewTransactionModal onSubmit={handleTransactionSubmit} />}
+      <h1 className="text-3xl font-bold text-text mb-2 text-center">
+        Budget Tracker
+      </h1>
+      <div className="justify justify-end flex">
+        <button
+          onClick={() => setShowModal(true)}
+          className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
+        >
+          <span className="text-lg text-white">Edit Paycheck Allocation</span>
         </button>
-        <TransactionHistory />
+      </div>
+      <div className="flex flex-col items-center gap-4">
+        <BalancePill label="Savings 💰" amount={balances.savings} />
+        <BalancePill label="Needs 📝" amount={balances.needs} />
+        <BalancePill label="Wants 🛍️" amount={balances.wants} />
+      </div>
+      <button onClick={()=>{setShowNewTransaction(true)}} className="mt-4 w-full py-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80">
+        + New Transaction
+      </button>
+      <TransactionHistory />
     </div>
   );
 }
