@@ -1,63 +1,71 @@
-const transactions = [
-  {
-    id: 1,
-    label: "Grocery Store",
-    category: "Needs",
-    amount: -54.32,
-    date: "May 19",
-  },
-  {
-    id: 2,
-    label: "Paycheck",
-    category: "Income",
-    amount: 1200.0,
-    date: "May 18",
-  },
-  {
-    id: 3,
-    label: "Netflix",
-    category: "Wants",
-    amount: -15.99,
-    date: "May 17",
-  },
-  {
-    id: 4,
-    label: "Electric Bill",
-    category: "Needs",
-    amount: -88.5,
-    date: "May 16",
-  },
-  {
-    id: 5,
-    label: "Coffee Shop",
-    category: "Wants",
-    amount: -6.75,
-    date: "May 15",
-  },
-  {
-    id: 6,
-    label: "Freelance Payment",
-    category: "Income",
-    amount: 350.0,
-    date: "May 14",
-  },
-  {
-    id: 7,
-    label: "Gas Station",
-    category: "Needs",
-    amount: -42.0,
-    date: "May 13",
-  },
-  {
-    id: 8,
-    label: "Concert Tickets",
-    category: "Wants",
-    amount: -120.0,
-    date: "May 12",
-  },
-];
+// const transactions = [
+//   {
+//     id: 1,
+//     label: "Grocery Store",
+//     category: "Needs",
+//     amount: -54.32,
+//     date: "May 19",
+//   },
+//   {
+//     id: 2,
+//     label: "Paycheck",
+//     category: "Income",
+//     amount: 1200.0,
+//     date: "May 18",
+//   },
+//   {
+//     id: 3,
+//     label: "Netflix",
+//     category: "Wants",
+//     amount: -15.99,
+//     date: "May 17",
+//   },
+//   {
+//     id: 4,
+//     label: "Electric Bill",
+//     category: "Needs",
+//     amount: -88.5,
+//     date: "May 16",
+//   },
+//   {
+//     id: 5,
+//     label: "Coffee Shop",
+//     category: "Wants",
+//     amount: -6.75,
+//     date: "May 15",
+//   },
+//   {
+//     id: 6,
+//     label: "Freelance Payment",
+//     category: "Income",
+//     amount: 350.0,
+//     date: "May 14",
+//   },
+//   {
+//     id: 7,
+//     label: "Gas Station",
+//     category: "Needs",
+//     amount: -42.0,
+//     date: "May 13",
+//   },
+//   {
+//     id: 8,
+//     label: "Concert Tickets",
+//     category: "Wants",
+//     amount: -120.0,
+//     date: "May 12",
+//   },
+// ];
 
-export default function TransactionHistory() {
+interface Transaction {
+  id: number;
+  label: string;
+  category: string;
+  amount: number;
+  date: string;
+}
+
+export default function TransactionHistory({ transactions }: { transactions: Transaction[] }) {
   return (
     <div className="mt-4">
       <h2 className="text-xl font-semibold text-text mb-3 px-1">

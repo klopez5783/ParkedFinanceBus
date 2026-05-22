@@ -51,9 +51,23 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
     onSubmit(balances);
   }
 
+  function handleOverlayClick(e: React.MouseEvent) {
+    if (e.target === e.currentTarget) {
+      onSubmit({
+        savings: 0,
+        needs: 0,
+        wants: 0,
+      });
+    }
+  } 
+
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-surface rounded-2xl p-6 w-full max-w-sm shadow-xl">
+        <span className="text-text font-bold text-xl cursor-pointer block text-right" onClick={handleOverlayClick}>
+          ✖
+        </span>
         <h2 className="text-2xl font-bold text-text mb-1">
           New Paycheck Allocation
         </h2>

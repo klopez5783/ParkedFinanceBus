@@ -11,6 +11,14 @@ interface Balances {
   wants: number;
 }
 
+interface Transaction {
+  id: number;
+  label: string;
+  category: "Needs" | "Wants" | "Savings";
+  amount: number;
+  date: string;
+}
+
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [showNewTransaction, setShowNewTransaction] = useState(false);
@@ -20,32 +28,47 @@ function App() {
     wants: 0,
   });
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   function handleAllocation(newBalances: Balances) {
     setBalances(newBalances);
     setShowModal(false);
   }
 
-  function handleTransactionSubmit() {
-    console.log("New transaction submitted");
-    setShowNewTransaction(false);
-  }
+  function handleTransactionSubmit(payload?: { savings: number; needs: number; wants: number; label: string }) {
+  if (!payload) return;
+  const category = payload.savings ? "Savings" : payload.needs ? "Needs" : "Wants";
+  const amount = payload.savings || payload.needs || payload.wants;
+  setTransactions(prev => [...prev, {
+    id: Date.now(),
+    amount,
+    category,
+    date: new Date().toLocaleDateString(),
+    label: payload.label || "New Transaction",
+  }]);
+  setShowNewTransaction(false);
+}
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
       {showModal && <PaycheckAllocationModal onSubmit={handleAllocation} />}
-      {showNewTransaction && <NewTransactionModal onSubmit={handleTransactionSubmit} />}
+      {showNewTransaction && (
+        <NewTransactionModal onSubmit={handleTransactionSubmit} />
+      )}
       <h1 className="text-3xl font-bold text-text mb-2 text-center">
         Budget Tracker
       </h1>
       <div className="justify justify-end flex">
         <button
-          onClick={() => {setShowModal(true)
-            if(!hasOpenedModal) setHasOpenedModal(true)
+          onClick={() => {
+            setShowModal(true);
+            if (!hasOpenedModal) setHasOpenedModal(true);
           }}
           className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
         >
-          {hasOpenedModal ? "Edit Paycheck Allocation" : "New Paycheck Allocation"}
+          {hasOpenedModal
+            ? "Edit Paycheck Allocation"
+            : "New Paycheck Allocation"}
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
@@ -53,10 +76,15 @@ function App() {
         <BalancePill label="Needs 📝" amount={balances.needs} />
         <BalancePill label="Wants 🛍️" amount={balances.wants} />
       </div>
-      <button onClick={()=>{setShowNewTransaction(true)}} className="mt-4 w-full py-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80">
+      <button
+        onClick={() => {
+          setShowNewTransaction(true);
+        }}
+        className="mt-4 w-full py-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
+      >
         + New Transaction
       </button>
-      <TransactionHistory />
+      <TransactionHistory transactions={transactions} />
     </div>
   );
 }
