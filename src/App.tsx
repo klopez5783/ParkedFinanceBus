@@ -35,19 +35,41 @@ function App() {
     setShowModal(false);
   }
 
-  function handleTransactionSubmit(payload?: { savings: number; needs: number; wants: number; label: string }) {
-  if (!payload) return;
-  const category = payload.savings ? "Savings" : payload.needs ? "Needs" : "Wants";
-  const amount = payload.savings || payload.needs || payload.wants;
-  setTransactions(prev => [...prev, {
-    id: Date.now(),
-    amount,
-    category,
-    date: new Date().toLocaleDateString(),
-    label: payload.label || "New Transaction",
-  }]);
-  setShowNewTransaction(false);
-}
+  function handleTransactionSubmit(payload?: {
+    savings: number;
+    needs: number;
+    wants: number;
+    label: string; 
+    deposit: boolean;
+  }) {
+    if (!payload) return;
+    console.log("Received transaction payload:", payload);
+    const category = payload.savings
+      ? "Savings"
+      : payload.needs
+        ? "Needs"
+        : "Wants";
+    const amount = payload.savings || payload.needs || payload.wants;
+    const key = category.toLowerCase() as keyof Balances;
+
+    setBalances((prev) => ({
+      ...prev,
+      [key]: payload.deposit ? prev[key] + amount : prev[key] + amount,
+    }));
+
+    setTransactions((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        amount,
+        category,
+        date: new Date().toLocaleDateString(),
+        label: payload.label || "New Transaction",
+        deposit: payload.deposit,
+      },
+    ]);
+    setShowNewTransaction(false);
+  }
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">

@@ -3,20 +3,27 @@ import { useState } from "react";
 export default function NewTransactionModal({
   onSubmit,
 }: {
-  onSubmit: (payload?: { savings: number; needs: number; wants: number, label: string }) => void;
+  onSubmit: (payload?: { savings: number; needs: number; wants: number, label: string, deposit: boolean }) => void;
 }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("savings");
+  const [deposit, setDeposit] = useState(false);
   const [label, setLabel] = useState("");
 
   const handleSubmit = () => {
     console.log("Submitting transaction:", { amount, category, label });
     const amountNum = parseFloat(amount) || 0;
+    if ( !amount || isNaN(amountNum) || amountNum <= 0) {
+      alert("Please enter a valid amount greater than 0.");
+      return;
+    }
+    const signedAmount = deposit ? amountNum : -amountNum;
     onSubmit({
-      savings: category === "savings" ? amountNum : 0,
-      needs: category === "needs" ? amountNum : 0,
-      wants: category === "wants" ? amountNum : 0,
+      savings: category === "savings" ? signedAmount : 0,
+      needs: category === "needs" ? signedAmount : 0,
+      wants: category === "wants" ? signedAmount : 0,
       label,
+      deposit: deposit,
     });
   };
 
@@ -27,6 +34,7 @@ export default function NewTransactionModal({
         needs: 0,
         wants: 0,
         label: "",
+        deposit: false,
       });
     }
   }
@@ -68,6 +76,15 @@ export default function NewTransactionModal({
             <option value="needs">Needs 📝</option>
             <option value="wants">Wants 🛍️</option>
           </select>
+        </div>
+        <div className="flex items-center mb-4">
+          <input
+            type="checkbox"
+            checked={deposit}
+            className="mr-2"
+            onChange={(e) => setDeposit(e.target.checked)}
+          />
+          <label className="text-white">Deposit</label>
         </div>
         <button
           onClick={handleSubmit}

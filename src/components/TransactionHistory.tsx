@@ -63,6 +63,7 @@ interface Transaction {
   category: string;
   amount: number;
   date: string;
+  deposit?: boolean;
 }
 
 export default function TransactionHistory({ transactions }: { transactions: Transaction[] }) {
