@@ -3,7 +3,13 @@ import { useState } from "react";
 export default function NewTransactionModal({
   onSubmit,
 }: {
-  onSubmit: (payload?: { savings: number; needs: number; wants: number, label: string, deposit: boolean }) => void;
+  onSubmit: (payload?: {
+    savings: number;
+    needs: number;
+    wants: number;
+    label: string;
+    deposit: boolean;
+  }) => void;
 }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("savings");
@@ -13,7 +19,7 @@ export default function NewTransactionModal({
   const handleSubmit = () => {
     console.log("Submitting transaction:", { amount, category, label });
     const amountNum = parseFloat(amount) || 0;
-    if ( !amount || isNaN(amountNum) || amountNum <= 0) {
+    if (!amount || isNaN(amountNum) || amountNum <= 0) {
       alert("Please enter a valid amount greater than 0.");
       return;
     }
@@ -22,7 +28,7 @@ export default function NewTransactionModal({
       savings: category === "savings" ? signedAmount : 0,
       needs: category === "needs" ? signedAmount : 0,
       wants: category === "wants" ? signedAmount : 0,
-      label,
+      label: label || "Untitled Transaction",
       deposit: deposit,
     });
   };
@@ -49,6 +55,18 @@ export default function NewTransactionModal({
           ✖
         </span>
         <h2 className="text-xl text-white font-bold mb-4">New Transaction</h2>
+        <label className="block text-lg font-medium text-white mb-1">
+          Title
+        </label>
+        <div className="items-center bg-surfaceLight rounded-xl px-3 py-2 gap-1">
+          <input
+            type="text"
+            placeholder="Enter transaction title"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="bg-transparent text-text flex-1 outline-none text-lg font-semibold placeholder:text-mutedText"
+          />
+        </div>
         <label className="block text-lg font-medium text-white mb-1">
           Amount
         </label>
