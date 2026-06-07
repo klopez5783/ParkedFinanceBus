@@ -29,9 +29,14 @@ function App() {
   });
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [savingsGoal, setSavingsGoal] = useState(0);
+  const displaySavings =
+    balances.savings < 0 ? balances.savings : savingsGoal + balances.savings;
 
   function handleAllocation(newBalances: Balances) {
-    setBalances(newBalances);
+    setSavingsGoal(newBalances.savings); // 300 goes here
+    setBalances({ ...newBalances, savings: 0 }); // balances.savings starts at 0
+    console.log("Updated balances:", { ...newBalances, savings: 0 });
     setShowModal(false);
   }
 
@@ -39,7 +44,7 @@ function App() {
     savings: number;
     needs: number;
     wants: number;
-    label: string; 
+    label: string;
     deposit: boolean;
   }) {
     if (!payload) return;
@@ -73,9 +78,17 @@ function App() {
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
-      {showModal && <PaycheckAllocationModal onClose={()=>setShowModal(false)} onSubmit={handleAllocation} />}
+      {showModal && (
+        <PaycheckAllocationModal
+          onClose={() => setShowModal(false)}
+          onSubmit={handleAllocation}
+        />
+      )}
       {showNewTransaction && (
-        <NewTransactionModal onClose={()=>setShowNewTransaction(false)} onSubmit={handleTransactionSubmit} />
+        <NewTransactionModal
+          onClose={() => setShowNewTransaction(false)}
+          onSubmit={handleTransactionSubmit}
+        />
       )}
       <h1 className="text-3xl font-bold text-text mb-2 text-center">
         Budget Tracker
@@ -94,7 +107,7 @@ function App() {
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <BalancePill label="Savings 💰" amount={balances.savings} />
+        <BalancePill label="Savings 💰" amount={displaySavings} />
         <BalancePill label="Needs 📝" amount={balances.needs} />
         <BalancePill label="Wants 🛍️" amount={balances.wants} />
       </div>
