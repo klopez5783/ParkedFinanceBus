@@ -10,7 +10,9 @@ export default function BalancePill({
       <span className="text-surfaceLight font-semibold uppercase tracking-widest text-gray-400 text-lg">
         {label}
       </span>
-      <span className="text-2xl font-bold text-gray-800">
+      <span
+        className={`text-2xl font-bold text-gray-800 ${amount >= 0 ? "text-green-500" : "text-red-400"}`}
+      >
         ${amount.toFixed(2)}
       </span>
     </div>
