@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function NewTransactionModal({
   onSubmit,
+  onClose
 }: {
   onSubmit: (payload?: {
     savings: number;
@@ -10,6 +11,7 @@ export default function NewTransactionModal({
     label: string;
     deposit: boolean;
   }) => void;
+  onClose: ()=> void;
 }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("savings");
@@ -33,24 +35,13 @@ export default function NewTransactionModal({
     });
   };
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) {
-      onSubmit({
-        savings: 0,
-        needs: 0,
-        wants: 0,
-        label: "",
-        deposit: false,
-      });
-    }
-  }
 
   return (
     <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-surface rounded-2xl p-6 w-full max-w-sm shadow-xl">
         <span
           className="text-text font-bold text-xl cursor-pointer block text-right"
-          onClick={handleOverlayClick}
+          onClick={onClose}
         >
           ✖
         </span>

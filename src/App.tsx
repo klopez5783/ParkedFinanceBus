@@ -54,7 +54,7 @@ function App() {
 
     setBalances((prev) => ({
       ...prev,
-      [key]: payload.deposit ? prev[key] + amount : prev[key] + amount,
+      [key]: prev[key] + amount,
     }));
 
     setTransactions((prev) => [
@@ -73,9 +73,9 @@ function App() {
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
-      {showModal && <PaycheckAllocationModal onSubmit={handleAllocation} />}
+      {showModal && <PaycheckAllocationModal onClose={()=>setShowModal(false)} onSubmit={handleAllocation} />}
       {showNewTransaction && (
-        <NewTransactionModal onSubmit={handleTransactionSubmit} />
+        <NewTransactionModal onClose={()=>setShowNewTransaction(false)} onSubmit={handleTransactionSubmit} />
       )}
       <h1 className="text-3xl font-bold text-text mb-2 text-center">
         Budget Tracker

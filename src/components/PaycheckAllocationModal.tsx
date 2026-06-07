@@ -12,7 +12,13 @@ interface Props {
   onSubmit: (balances: Record<CategoryKey, number>) => void;
 }
 
-export default function PaycheckAllocationModal({ onSubmit }: Props) {
+export default function PaycheckAllocationModal({
+  onSubmit,
+  onClose,
+}: {
+  onClose: () => void;
+  onSubmit: (balances: Record<CategoryKey, number>) => void;
+}) {
   const [paycheck, setPaycheck] = useState("");
   const [mode, setMode] = useState<"percent" | "dollar">("percent");
   const [values, setValues] = useState<Record<CategoryKey, string>>({
@@ -25,11 +31,10 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
 
   const total = CATEGORIES.reduce(
     (sum, c) => sum + (parseFloat(values[c.key]) || 0),
-    0
+    0,
   );
 
-  const remaining =
-    mode === "percent" ? 100 - total : paycheckNum - total;
+  const remaining = mode === "percent" ? 100 - total : paycheckNum - total;
 
   const fullyAllocated = Math.abs(remaining) < 0.01;
   const overAllocated = remaining < -0.01;
@@ -45,27 +50,18 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
     const balances = {} as Record<CategoryKey, number>;
     for (const c of CATEGORIES) {
       const val = parseFloat(values[c.key]) || 0;
-      balances[c.key] =
-        mode === "percent" ? (val / 100) * paycheckNum : val;
+      balances[c.key] = mode === "percent" ? (val / 100) * paycheckNum : val;
     }
     onSubmit(balances);
   }
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) {
-      onSubmit({
-        savings: 0,
-        needs: 0,
-        wants: 0,
-      });
-    }
-  } 
-
-
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-surface rounded-2xl p-6 w-full max-w-sm shadow-xl">
-        <span className="text-text font-bold text-xl cursor-pointer block text-right" onClick={handleOverlayClick}>
+        <span
+          className="text-text font-bold text-xl cursor-pointer block text-right"
+          onClick={onClose}
+        >
           ✖
         </span>
         <h2 className="text-2xl font-bold text-text mb-1">
@@ -99,9 +95,7 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
               type="button"
               onClick={() => handleModeSwitch("percent")}
               className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                mode === "percent"
-                  ? "bg-primary text-white"
-                  : "text-mutedText"
+                mode === "percent" ? "bg-primary text-white" : "text-mutedText"
               }`}
             >
               % Percent
@@ -110,9 +104,7 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
               type="button"
               onClick={() => handleModeSwitch("dollar")}
               className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                mode === "dollar"
-                  ? "bg-primary text-white"
-                  : "text-mutedText"
+                mode === "dollar" ? "bg-primary text-white" : "text-mutedText"
               }`}
             >
               $ Dollar
@@ -157,23 +149,23 @@ export default function PaycheckAllocationModal({ onSubmit }: Props) {
                 fullyAllocated
                   ? "text-success"
                   : overAllocated
-                  ? "text-danger"
-                  : "text-warning"
+                    ? "text-danger"
+                    : "text-warning"
               }`}
             >
               {fullyAllocated
                 ? "Fully allocated"
                 : overAllocated
-                ? `Over by ${
-                    mode === "percent"
-                      ? `${Math.abs(remaining).toFixed(1)}%`
-                      : `$${Math.abs(remaining).toFixed(2)}`
-                  }`
-                : `${
-                    mode === "percent"
-                      ? `${remaining.toFixed(1)}% remaining`
-                      : `$${remaining.toFixed(2)} remaining`
-                  }`}
+                  ? `Over by ${
+                      mode === "percent"
+                        ? `${Math.abs(remaining).toFixed(1)}%`
+                        : `$${Math.abs(remaining).toFixed(2)}`
+                    }`
+                  : `${
+                      mode === "percent"
+                        ? `${remaining.toFixed(1)}% remaining`
+                        : `$${remaining.toFixed(2)} remaining`
+                    }`}
             </div>
           )}
 
