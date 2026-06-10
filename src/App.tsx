@@ -36,7 +36,6 @@ function App() {
   function handleAllocation(newBalances: Balances) {
     setSavingsGoal(newBalances.savings); // 300 goes here
     setBalances({ ...newBalances, savings: 0 }); // balances.savings starts at 0
-    console.log("Updated balances:", { ...newBalances, savings: 0 });
     setShowModal(false);
   }
 
@@ -49,6 +48,7 @@ function App() {
   }) {
     if (!payload) return;
     console.log("Received transaction payload:", payload);
+    console.log("Savings Goal : ", savingsGoal);
     const category = payload.savings
       ? "Savings"
       : payload.needs
@@ -75,6 +75,10 @@ function App() {
     ]);
     setShowNewTransaction(false);
   }
+
+  const net = balances.savings;
+  const savingsIndicator =
+    net < -savingsGoal ? "⚠" : net > 0 ? "✅" : undefined;
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
@@ -107,7 +111,11 @@ function App() {
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <BalancePill label="Savings 💰" amount={displaySavings} />
+        <BalancePill
+          label="Savings 💰"
+          amount={displaySavings}
+          indicator={savingsIndicator}
+        />
         <BalancePill label="Needs 📝" amount={balances.needs} />
         <BalancePill label="Wants 🛍️" amount={balances.wants} />
       </div>
