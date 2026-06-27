@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import BalancePill from "./components/BalancePill";
 import TransactionHistory from "./components/TransactionHistory";
@@ -22,14 +22,29 @@ interface Transaction {
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [showNewTransaction, setShowNewTransaction] = useState(false);
-  const [balances, setBalances] = useState<Balances>({
-    savings: 0,
-    needs: 0,
-    wants: 0,
+  const [balances, setBalances] = useState<Balances>(() => {
+    const saved = localStorage.getItem("budgetapp-state");
+    console.log("Loaded state from localStorage:", saved);
+    return saved
+      ? JSON.parse(saved).balances
+      : { savings: 0, needs: 0, wants: 0 };
   });
+
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [savingsGoal, setSavingsGoal] = useState(0);
+  useEffect(() => {
+    console.log("Use Effect triggered: Saving state to localStorage", { balances, transactions, savingsGoal });
+    localStorage.setItem(
+      "budgetapp-state",
+      JSON.stringify({
+        balances,
+        transactions,
+        savingsGoal,
+      }),
+    );
+  }, [balances, transactions, savingsGoal]);
+
   const displaySavings =
     balances.savings < 0 ? balances.savings : savingsGoal + balances.savings;
 
