@@ -4,6 +4,7 @@ import BalancePill from "./components/BalancePill";
 import TransactionHistory from "./components/TransactionHistory";
 import PaycheckAllocationModal from "./components/PaycheckAllocationModal";
 import NewTransactionModal from "./Modals/NewTransactionModal";
+import LoginPage from "./pages/LoginPage";
 
 interface Balances {
   savings: number;
@@ -29,6 +30,8 @@ function App() {
       ? JSON.parse(saved).balances
       : { savings: 0, needs: 0, wants: 0 };
   });
+
+  const [userId, setUserId] = useState<number | null>(null);
 
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -95,6 +98,10 @@ function App() {
   const savingsIndicator =
     net < -savingsGoal ? "⚠" : net > 0 ? "✅" : undefined;
 
+  if (userId === null) {
+    return <LoginPage onLogin={(id) => setUserId(id)} />;
+  }
+
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
       {showModal && (
@@ -142,6 +149,12 @@ function App() {
       >
         + New Transaction
       </button>
+      <button
+          onClick={() => setUserId(null)}
+          className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
+        >
+          Logout
+        </button>
       <TransactionHistory transactions={transactions} />
     </div>
   );
