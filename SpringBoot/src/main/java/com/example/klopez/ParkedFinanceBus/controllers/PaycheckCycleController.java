@@ -2,6 +2,7 @@ package com.example.klopez.ParkedFinanceBus.controllers;
 
 import com.example.klopez.ParkedFinanceBus.entities.PaycheckCycle;
 import com.example.klopez.ParkedFinanceBus.repositories.PaycheckCycleRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +23,10 @@ public class PaycheckCycleController {
     }
 
     @GetMapping("/user/{uid}")
-    public PaycheckCycle getPaycheckCycleByUid(@PathVariable Long uid) {
-        return paycheckCycleRepository.findByUid(uid).orElseThrow();
+    public ResponseEntity<?> getPaycheckCycleByUid(@PathVariable Long uid) {
+        return paycheckCycleRepository.findByUid(uid)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 
     @GetMapping("/{id}")

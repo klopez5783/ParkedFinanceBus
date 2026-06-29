@@ -5,20 +5,25 @@ import TransactionHistory from "./components/TransactionHistory";
 import PaycheckAllocationModal from "./components/PaycheckAllocationModal";
 import NewTransactionModal from "./Modals/NewTransactionModal";
 import LoginPage from "./pages/LoginPage";
+import { getPaycheckCycles } from "./services/paycheckCycleService";
+import PaycheckCycleWizard  from "./components/PaycheckCycleWizard";
+import type { PaycheckCycleData } from "./interfaces/PaycheckCycle";
+import type { Balances } from "./interfaces/Balances";
+import type { Transaction } from "./interfaces/Transaction";
 
-interface Balances {
-  savings: number;
-  needs: number;
-  wants: number;
-}
+// interface Balances {
+//   savings: number;
+//   needs: number;
+//   wants: number;
+// }
 
-interface Transaction {
-  id: number;
-  label: string;
-  category: "Needs" | "Wants" | "Savings";
-  amount: number;
-  date: string;
-}
+// interface Transaction {
+//   id: number;
+//   label: string;
+//   category: "Needs" | "Wants" | "Savings";
+//   amount: number;
+//   date: string;
+// }
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -36,8 +41,14 @@ function App() {
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [savingsGoal, setSavingsGoal] = useState(0);
+  const [cycle, setCycle] = useState<PaycheckCycleData | null>(null);
+
   useEffect(() => {
-    console.log("Use Effect triggered: Saving state to localStorage", { balances, transactions, savingsGoal });
+    console.log("Use Effect triggered: Saving state to localStorage", {
+      balances,
+      transactions,
+      savingsGoal,
+    });
     localStorage.setItem(
       "budgetapp-state",
       JSON.stringify({
@@ -47,6 +58,26 @@ function App() {
       }),
     );
   }, [balances, transactions, savingsGoal]);
+
+  useEffect(() => {
+    if (userId === null) return;
+
+    getPaycheckCycles(userId)
+      .then((data) => {
+        if (data) {
+          setCycle(data);
+          setBalances({
+            savings: data.savings,
+            needs: data.needs,
+            wants: data.wants,
+          });
+          setSavingsGoal(data.savingsGoal);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching paycheck cycles:", error);
+      });
+  }, [userId]);
 
   const displaySavings =
     balances.savings < 0 ? balances.savings : savingsGoal + balances.savings;
@@ -101,6 +132,10 @@ function App() {
   if (userId === null) {
     return <LoginPage onLogin={(id) => setUserId(id)} />;
   }
+  if (!cycle) return <PaycheckCycleWizard userId={userId} onComplete={(data) => {
+    setCycle(data);
+    console.log("Cycle completed:", data);
+  }} />;
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
@@ -150,11 +185,11 @@ function App() {
         + New Transaction
       </button>
       <button
-          onClick={() => setUserId(null)}
-          className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
-        >
-          Logout
-        </button>
+        onClick={() => setUserId(null)}
+        className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
+      >
+        Logout
+      </button>
       <TransactionHistory transactions={transactions} />
     </div>
   );
