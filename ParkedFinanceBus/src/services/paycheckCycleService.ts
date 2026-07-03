@@ -1,4 +1,5 @@
 import API_BASE from "./api";
+import type { PaycheckCycleData }  from "../interfaces/PaycheckCycle";
 
 export async function getPaycheckCycles(userId: number) {
   const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}`);
@@ -34,3 +35,18 @@ export async function signup(
 
   return res.json();
 }
+
+export async function createPaycheckCycle(data: PaycheckCycleData) {
+  const res = await fetch(`${API_BASE}/api/PaycheckCycles`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create paycheck cycle");
+  }
+
+  return res.json();
+}
+

@@ -6,10 +6,11 @@ import PaycheckAllocationModal from "./components/PaycheckAllocationModal";
 import NewTransactionModal from "./Modals/NewTransactionModal";
 import LoginPage from "./pages/LoginPage";
 import { getPaycheckCycles } from "./services/paycheckCycleService";
-import PaycheckCycleWizard  from "./components/PaycheckCycleWizard";
+import PaycheckCycleWizard from "./components/PaycheckCycleWizard";
 import type { PaycheckCycleData } from "./interfaces/PaycheckCycle";
 import type { Balances } from "./interfaces/Balances";
 import type { Transaction } from "./interfaces/Transaction";
+import { createPaycheckCycle } from "./services/paycheckCycleService";
 
 // interface Balances {
 //   savings: number;
@@ -132,10 +133,25 @@ function App() {
   if (userId === null) {
     return <LoginPage onLogin={(id) => setUserId(id)} />;
   }
-  if (!cycle) return <PaycheckCycleWizard userId={userId} onComplete={(data) => {
-    setCycle(data);
-    console.log("Cycle completed:", data);
-  }} />;
+  if (!cycle)
+    return (
+      <PaycheckCycleWizard
+        userId={userId}
+        onComplete={(data) => {
+          createPaycheckCycle(data)
+            .then((savedCycle) => {
+              setCycle(savedCycle);
+              setBalances({
+                savings: savedCycle.savings,
+                needs: savedCycle.needs,
+                wants: savedCycle.wants,
+              });
+              setSavingsGoal(savedCycle.savingsGoal);
+            })
+            .catch((err) => console.error(err));
+        }}
+      />
+    );
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
