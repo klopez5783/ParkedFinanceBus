@@ -75,20 +75,6 @@ export function useBudget(userId: number | null) {
       [key]: prev[key] + amount,
     }));
 
-    setTransactions((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        amount,
-        category,
-        date: new Date().toLocaleDateString(),
-        description: payload.description || "New Transaction",
-        deposit: payload.deposit,
-        uid: userId!,
-        cycleId: payload.cycleID,
-      },
-    ]);
-
     createTransaction({
       uid: userId!,
       cycleId: cycle!.cycleId!,

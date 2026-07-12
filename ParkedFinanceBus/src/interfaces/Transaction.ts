@@ -1,6 +1,6 @@
 // Transaction.ts
 export interface Transaction {
-  id: number;
+  transactionId: number;
   uid: number;
   cycleId: number;
   description: string;
