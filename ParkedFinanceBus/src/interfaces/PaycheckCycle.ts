@@ -7,4 +7,5 @@ export interface PaycheckCycleData {
   wants: number;
   startDate: string;
   endDate: string;
+  cycleId?: number;
 }

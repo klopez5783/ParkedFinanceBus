@@ -59,7 +59,7 @@
 
 interface Transaction {
   id: number;
-  label: string;
+  description: string;
   category: string;
   amount: number;
   date: string;
@@ -79,7 +79,7 @@ export default function TransactionHistory({ transactions }: { transactions: Tra
             className="flex items-center justify-between bg-white px-4 py-3 shadow-sm"
           >
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-800">{tx.label}</span>
+              <span className="font-semibold text-gray-800">{tx.description}</span>
               <span className="text-xs text-gray-400">
                 {tx.category} · {tx.date}
               </span>

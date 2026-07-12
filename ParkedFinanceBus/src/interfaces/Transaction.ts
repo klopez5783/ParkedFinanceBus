@@ -1,6 +1,9 @@
+// Transaction.ts
 export interface Transaction {
   id: number;
-  label: string;
+  uid: number;
+  cycleId: number;
+  description: string;
   category: "Needs" | "Wants" | "Savings";
   amount: number;
   date: string;

@@ -1,170 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 import BalancePill from "./components/BalancePill";
 import TransactionHistory from "./components/TransactionHistory";
-import PaycheckAllocationModal from "./components/PaycheckAllocationModal";
 import NewTransactionModal from "./Modals/NewTransactionModal";
 import LoginPage from "./pages/LoginPage";
-import { getPaycheckCycles } from "./services/paycheckCycleService";
 import PaycheckCycleWizard from "./components/PaycheckCycleWizard";
-import type { PaycheckCycleData } from "./interfaces/PaycheckCycle";
-import type { Balances } from "./interfaces/Balances";
-import type { Transaction } from "./interfaces/Transaction";
-import { createPaycheckCycle } from "./services/paycheckCycleService";
-
-// interface Balances {
-//   savings: number;
-//   needs: number;
-//   wants: number;
-// }
-
-// interface Transaction {
-//   id: number;
-//   label: string;
-//   category: "Needs" | "Wants" | "Savings";
-//   amount: number;
-//   date: string;
-// }
+import { useBudget } from "./hooks/useBudget";
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
-  const [showNewTransaction, setShowNewTransaction] = useState(false);
-  const [balances, setBalances] = useState<Balances>(() => {
-    const saved = localStorage.getItem("budgetapp-state");
-    console.log("Loaded state from localStorage:", saved);
-    return saved
-      ? JSON.parse(saved).balances
-      : { savings: 0, needs: 0, wants: 0 };
-  });
-
   const [userId, setUserId] = useState<number | null>(null);
+  const [showNewTransaction, setShowNewTransaction] = useState(false);
 
-  const [hasOpenedModal, setHasOpenedModal] = useState(false);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [savingsGoal, setSavingsGoal] = useState(0);
-  const [cycle, setCycle] = useState<PaycheckCycleData | null>(null);
-
-  useEffect(() => {
-    console.log("Use Effect triggered: Saving state to localStorage", {
-      balances,
-      transactions,
-      savingsGoal,
-    });
-    localStorage.setItem(
-      "budgetapp-state",
-      JSON.stringify({
-        balances,
-        transactions,
-        savingsGoal,
-      }),
-    );
-  }, [balances, transactions, savingsGoal]);
-
-  useEffect(() => {
-    if (userId === null) return;
-
-    getPaycheckCycles(userId)
-      .then((data) => {
-        if (data) {
-          setCycle(data);
-          setBalances({
-            savings: data.savings,
-            needs: data.needs,
-            wants: data.wants,
-          });
-          setSavingsGoal(data.savingsGoal);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching paycheck cycles:", error);
-      });
-  }, [userId]);
-
-  const displaySavings =
-    balances.savings < 0 ? balances.savings : savingsGoal + balances.savings;
-
-  function handleAllocation(newBalances: Balances) {
-    setSavingsGoal(newBalances.savings); // 300 goes here
-    setBalances({ ...newBalances, savings: 0 }); // balances.savings starts at 0
-    setShowModal(false);
-  }
-
-  function handleTransactionSubmit(payload?: {
-    savings: number;
-    needs: number;
-    wants: number;
-    label: string;
-    deposit: boolean;
-  }) {
-    if (!payload) return;
-    console.log("Received transaction payload:", payload);
-    console.log("Savings Goal : ", savingsGoal);
-    const category = payload.savings
-      ? "Savings"
-      : payload.needs
-        ? "Needs"
-        : "Wants";
-    const amount = payload.savings || payload.needs || payload.wants;
-    const key = category.toLowerCase() as keyof Balances;
-
-    setBalances((prev) => ({
-      ...prev,
-      [key]: prev[key] + amount,
-    }));
-
-    setTransactions((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        amount,
-        category,
-        date: new Date().toLocaleDateString(),
-        label: payload.label || "New Transaction",
-        deposit: payload.deposit,
-      },
-    ]);
-    setShowNewTransaction(false);
-  }
-
-  const net = balances.savings;
-  const savingsIndicator =
-    net < -savingsGoal ? "⚠" : net > 0 ? "✅" : undefined;
+  const {
+    balances,
+    transactions,
+    cycle,
+    displaySavings,
+    savingsIndicator,
+    handleCycleCreate,
+    handleTransactionSubmit,
+    handleLogout,
+  } = useBudget(userId);
 
   if (userId === null) {
     return <LoginPage onLogin={(id) => setUserId(id)} />;
   }
-  if (!cycle)
+
+  if (!cycle) {
     return (
       <PaycheckCycleWizard
         userId={userId}
-        onComplete={(data) => {
-          createPaycheckCycle(data)
-            .then((savedCycle) => {
-              setCycle(savedCycle);
-              setBalances({
-                savings: savedCycle.savings,
-                needs: savedCycle.needs,
-                wants: savedCycle.wants,
-              });
-              setSavingsGoal(savedCycle.savingsGoal);
-            })
-            .catch((err) => console.error(err));
-        }}
+        onComplete={(data) => handleCycleCreate(data)}
       />
     );
+  }
 
   return (
     <div className="min-h-screen p-2 bg-background gap-2 px-3">
-      {showModal && (
-        <PaycheckAllocationModal
-          onClose={() => setShowModal(false)}
-          onSubmit={handleAllocation}
-        />
-      )}
       {showNewTransaction && (
         <NewTransactionModal
           onClose={() => setShowNewTransaction(false)}
-          onSubmit={handleTransactionSubmit}
+          onSubmit={(payload) => {
+            handleTransactionSubmit(payload);
+            setShowNewTransaction(false);
+          }}
         />
       )}
       <h1 className="text-3xl font-bold text-text mb-2 text-center">
@@ -173,38 +52,28 @@ function App() {
       <div className="justify justify-end flex">
         <button
           onClick={() => {
-            setShowModal(true);
-            if (!hasOpenedModal) setHasOpenedModal(true);
+            setUserId(null);
+            handleLogout();
           }}
           className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
         >
-          {hasOpenedModal
-            ? "Edit Paycheck Allocation"
-            : "New Paycheck Allocation"}
+          Logout
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
         <BalancePill
-          label="Savings 💰"
+          description="Savings 💰"
           amount={displaySavings}
           indicator={savingsIndicator}
         />
-        <BalancePill label="Needs 📝" amount={balances.needs} />
-        <BalancePill label="Wants 🛍️" amount={balances.wants} />
+        <BalancePill description="Needs 📝" amount={balances.needs} />
+        <BalancePill description="Wants 🛍️" amount={balances.wants} />
       </div>
       <button
-        onClick={() => {
-          setShowNewTransaction(true);
-        }}
+        onClick={() => setShowNewTransaction(true)}
         className="mt-4 w-full py-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
       >
         + New Transaction
-      </button>
-      <button
-        onClick={() => setUserId(null)}
-        className="mt-4 p-3 rounded-xl border border-divider bg-surfaceLight text-white font-semibold text-xl shadow- active:opacity-80"
-      >
-        Logout
       </button>
       <TransactionHistory transactions={transactions} />
     </div>

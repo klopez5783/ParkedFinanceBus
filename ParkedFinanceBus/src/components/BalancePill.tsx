@@ -1,16 +1,16 @@
 export default function BalancePill({
-  label,
+  description,
   amount,
   indicator,
 }: {
-  label: string;
+  description: string;
   amount: number;
   indicator?: string;
 }) {
   return (
     <div className="flex mt-3 justify-between gap-1 bg-white rounded-full px-4 py-3 shadow-lg w-full">
       <span className="text-surfaceLight font-semibold uppercase tracking-widest text-gray-400 text-lg">
-        {label}
+        {description}
       </span>
 
       <span
