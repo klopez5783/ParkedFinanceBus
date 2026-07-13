@@ -6,7 +6,10 @@ import {
   getPaycheckCycles,
   createPaycheckCycle,
 } from "../services/paycheckCycleService";
-import { createTransaction } from "../services/transactionService";
+import {
+  createTransaction,
+  getTransactionsByCycle,
+} from "../services/transactionService";
 
 export function useBudget(userId: number | null) {
   const [balances, setBalances] = useState<Balances>({
@@ -33,6 +36,14 @@ export function useBudget(userId: number | null) {
             wants: data.wants,
           });
           setSavingsGoal(data.savingsGoal);
+          // Fetch transactions for the cycle
+          getTransactionsByCycle(data.cycleId!)
+            .then((transactionsData) => {
+              setTransactions(transactionsData);
+            })
+            .catch((error) => {
+              console.error("Error fetching transactions:", error);
+            });
         }
       })
       .catch((error) => {
