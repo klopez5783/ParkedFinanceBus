@@ -96,7 +96,6 @@ export function useBudget(userId: number | null) {
         description: payload.description || "New Transaction",
         category,
         amount,
-        date: new Date().toISOString(),
       });
 
       setTransactions((prev) => [...prev, savedTransaction]);
