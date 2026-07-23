@@ -5,6 +5,7 @@ import type { PaycheckCycleData } from "../interfaces/PaycheckCycle";
 import {
   getPaycheckCycles,
   createPaycheckCycle,
+  updatePaycheckCycle,
 } from "../services/paycheckCycleService";
 import {
   createTransaction,
@@ -63,7 +64,7 @@ export function useBudget(userId: number | null) {
     });
   }
 
-  function handleTransactionSubmit(payload?: {
+  async function handleTransactionSubmit(payload?: {
     savings: number;
     needs: number;
     wants: number;
@@ -81,25 +82,36 @@ export function useBudget(userId: number | null) {
     const amount = payload.savings || payload.needs || payload.wants;
     const key = category.toLowerCase() as keyof Balances;
 
-    setBalances((prev) => ({
-      ...prev,
-      [key]: prev[key] + amount,
-    }));
+    const newBalances = {
+      ...balances,
+      [key]: balances[key] + amount,
+    };
 
-    createTransaction({
-      uid: userId!,
-      cycleId: cycle!.cycleId!,
-      description: payload.description || "New Transaction",
-      category,
-      amount,
-      date: new Date().toISOString(),
-    })
-      .then((savedTransaction) => {
-        setTransactions((prev) => [...prev, savedTransaction]);
-      })
-      .catch((error) => {
-        console.error("Error creating transaction:", error);
+    try {
+      const savedTransaction = await createTransaction({
+        uid: userId!,
+        cycleId: cycle!.cycleId!,
+        description: payload.description || "New Transaction",
+        category,
+        amount,
+        date: new Date().toISOString(),
       });
+
+      setTransactions((prev) => [...prev, savedTransaction]);
+
+      const updatedCycle = await updatePaycheckCycle(cycle!.cycleId!, {
+        ...cycle!,
+        savings: newBalances.savings,
+        needs: newBalances.needs,
+        wants: newBalances.wants,
+      });
+
+      setCycle(updatedCycle);
+      setBalances(newBalances);
+    } catch (error) {
+      console.error("Transaction or cycle update failed:", error);
+    }
+
   }
 
   function handleLogout() {

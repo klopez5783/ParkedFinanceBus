@@ -50,3 +50,20 @@ export async function createPaycheckCycle(data: PaycheckCycleData) {
   return res.json();
 }
 
+export async function updatePaycheckCycle(id: number, data: PaycheckCycleData) {
+  const res = await fetch(`${API_BASE}/api/PaycheckCycles/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to update paycheck cycle");
+  }
+
+  console.log("Update response:", res);
+
+  return res.json();
+}
+
+

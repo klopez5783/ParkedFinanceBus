@@ -38,5 +38,14 @@ public class PaycheckCycleController {
     public PaycheckCycle createPaycheckCycle(@RequestBody PaycheckCycle paycheckCycle) {
         return paycheckCycleRepository.save(paycheckCycle);
     }
+
+    @PatchMapping("/{id}")
+    public PaycheckCycle updateBalances(@PathVariable Long id, @RequestBody PaycheckCycle paycheckCycle) {
+        PaycheckCycle existingCycle = paycheckCycleRepository.findById(id).orElseThrow();
+        existingCycle.setSavings(paycheckCycle.getSavings());
+        existingCycle.setNeeds(paycheckCycle.getNeeds());
+        existingCycle.setWants(paycheckCycle.getWants());
+        return paycheckCycleRepository.save(existingCycle);
+    }
     
 }
