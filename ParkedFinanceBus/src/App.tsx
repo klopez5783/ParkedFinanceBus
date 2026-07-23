@@ -8,7 +8,10 @@ import PaycheckCycleWizard from "./components/PaycheckCycleWizard";
 import { useBudget } from "./hooks/useBudget";
 
 function App() {
-  const [userId, setUserId] = useState<number | null>(null);
+  const [userId, setUserId] = useState<number | null>(() => {
+    const stored = localStorage.getItem("userId");
+    return stored ? Number(stored) : null;
+  });
   const [showNewTransaction, setShowNewTransaction] = useState(false);
 
   const {
@@ -19,11 +22,16 @@ function App() {
     savingsIndicator,
     handleCycleCreate,
     handleTransactionSubmit,
+    handleTransactionDelete,
+    handleTransactionEdit,
     handleLogout,
   } = useBudget(userId);
 
   if (userId === null) {
-    return <LoginPage onLogin={(id) => setUserId(id)} />;
+    return <LoginPage onLogin={(id) => {
+      localStorage.setItem("userId", String(id));
+      setUserId(id);
+    }} />;
   }
 
   if (!cycle) {
@@ -52,6 +60,7 @@ function App() {
       <div className="justify justify-end flex">
         <button
           onClick={() => {
+            localStorage.removeItem("userId");
             setUserId(null);
             handleLogout();
           }}
@@ -75,7 +84,11 @@ function App() {
       >
         + New Transaction
       </button>
-      <TransactionHistory transactions={transactions} />
+      <TransactionHistory
+        transactions={transactions}
+        onDelete={handleTransactionDelete}
+        onEdit={handleTransactionEdit}
+      />
     </div>
   );
 }

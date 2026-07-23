@@ -6,5 +6,5 @@ export interface Transaction {
   description: string;
   category: "Needs" | "Wants" | "Savings";
   amount: number;
-  date: string;
+  createdAt: string;
 }

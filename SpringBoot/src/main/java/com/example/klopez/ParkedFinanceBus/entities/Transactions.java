@@ -47,7 +47,7 @@ public class Transactions {
     public Integer getUid() {return uid;}
     public void setUid(Integer uid) { this.uid = uid;}
 
-    public String getCatgory() {return category;}
+    public String getCategory() {return category;}
     public void setCategory(String category) {this.category = category;}
 
     public Double getAmount() {return amount;}

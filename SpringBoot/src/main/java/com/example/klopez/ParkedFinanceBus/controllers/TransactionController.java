@@ -3,6 +3,7 @@ package com.example.klopez.ParkedFinanceBus.controllers;
 
 import com.example.klopez.ParkedFinanceBus.entities.Transactions;
 import com.example.klopez.ParkedFinanceBus.repositories.TransactionRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,5 +42,20 @@ public class TransactionController {
     public Transactions createTransaction(@RequestBody Transactions transaction) {
         return transactionRepository.save(transaction);
     }
-    
+
+    @PatchMapping("/{id}")
+    public Transactions updateTransaction(@PathVariable Long id, @RequestBody Transactions transaction) {
+        Transactions existing = transactionRepository.findById(id).orElseThrow();
+        existing.setDescription(transaction.getDescription());
+        existing.setCategory(transaction.getCategory());
+        existing.setAmount(transaction.getAmount());
+        return transactionRepository.save(existing);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
+        transactionRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

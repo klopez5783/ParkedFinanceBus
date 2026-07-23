@@ -10,6 +10,8 @@ import {
 import {
   createTransaction,
   getTransactionsByCycle,
+  updateTransaction,
+  deleteTransaction,
 } from "../services/transactionService";
 
 export function useBudget(userId: number | null) {
@@ -114,6 +116,61 @@ export function useBudget(userId: number | null) {
 
   }
 
+  async function handleTransactionDelete(tx: Transaction) {
+    const key = tx.category.toLowerCase() as keyof Balances;
+    const newBalances = { ...balances, [key]: balances[key] - tx.amount };
+
+    try {
+      await deleteTransaction(tx.transactionId);
+      setTransactions((prev) => prev.filter((t) => t.transactionId !== tx.transactionId));
+
+      const updatedCycle = await updatePaycheckCycle(cycle!.cycleId!, {
+        ...cycle!,
+        savings: newBalances.savings,
+        needs: newBalances.needs,
+        wants: newBalances.wants,
+      });
+
+      setCycle(updatedCycle);
+      setBalances(newBalances);
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
+  }
+
+  async function handleTransactionEdit(
+    tx: Transaction,
+    updated: { description: string; category: string; amount: number }
+  ) {
+    console.log("Editing transaction:", tx);
+    console.log("type of tx.category:", typeof tx.category, "value:", tx.category);
+    const oldKey = tx.category.toLowerCase() as keyof Balances;
+    const newKey = updated.category.toLowerCase() as keyof Balances;
+
+    const newBalances = { ...balances };
+    newBalances[oldKey] = newBalances[oldKey] - tx.amount;
+    newBalances[newKey] = newBalances[newKey] + updated.amount;
+
+    try {
+      const savedTransaction = await updateTransaction(tx.transactionId, updated);
+      setTransactions((prev) =>
+        prev.map((t) => (t.transactionId === tx.transactionId ? savedTransaction : t))
+      );
+
+      const updatedCycle = await updatePaycheckCycle(cycle!.cycleId!, {
+        ...cycle!,
+        savings: newBalances.savings,
+        needs: newBalances.needs,
+        wants: newBalances.wants,
+      });
+
+      setCycle(updatedCycle);
+      setBalances(newBalances);
+    } catch (error) {
+      console.error("Edit failed:", error);
+    }
+  }
+
   function handleLogout() {
     setCycle(null);
     setBalances({ savings: 0, needs: 0, wants: 0 });
@@ -139,6 +196,8 @@ export function useBudget(userId: number | null) {
     savingsIndicator,
     handleCycleCreate,
     handleTransactionSubmit,
+    handleTransactionDelete,
+    handleTransactionEdit,
     handleLogout,
   };
 }
