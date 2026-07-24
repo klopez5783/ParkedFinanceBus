@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PaycheckCycleRepository extends JpaRepository<PaycheckCycle, Long> {
-    Optional<PaycheckCycle> findByUid(Long uid);
+    Optional<PaycheckCycle> findTopByUidOrderByCycleIdDesc(Long uid);
 }

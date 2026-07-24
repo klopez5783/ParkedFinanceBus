@@ -2,7 +2,9 @@ import API_BASE from "./api";
 import type { PaycheckCycleData }  from "../interfaces/PaycheckCycle";
 
 export async function getPaycheckCycles(userId: number) {
+  console.log("Fetching paycheck cycles for userId:", userId);
   const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}`);
+  console.log("Response from paycheck cycles fetch:", res);
 
   if (res.status === 204) {
     return null;  // no cycle exists

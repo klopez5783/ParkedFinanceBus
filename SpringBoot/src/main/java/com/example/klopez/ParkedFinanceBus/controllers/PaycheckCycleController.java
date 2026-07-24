@@ -24,7 +24,7 @@ public class PaycheckCycleController {
 
     @GetMapping("/user/{uid}")
     public ResponseEntity<?> getPaycheckCycleByUid(@PathVariable Long uid) {
-        return paycheckCycleRepository.findByUid(uid)
+        return paycheckCycleRepository.findTopByUidOrderByCycleIdDesc(uid)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }

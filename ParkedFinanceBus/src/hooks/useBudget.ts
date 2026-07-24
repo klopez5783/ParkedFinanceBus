@@ -23,13 +23,19 @@ export function useBudget(userId: number | null) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [savingsGoal, setSavingsGoal] = useState(0);
   const [cycle, setCycle] = useState<PaycheckCycleData | null>(null);
+  const [isLoading, setLoading] = useState(false);
 
   // Fetch cycle on login
   useEffect(() => {
     if (userId === null) return;
 
+    setLoading(true);
+
+    console.log("Fetching paycheck cycles for userId:", userId);
+
     getPaycheckCycles(userId)
       .then((data) => {
+        console.log("Fetched paycheck cycles data:", data);
         if (data) {
           setCycle(data);
           console.log("Fetched cycle data:", data);
@@ -47,16 +53,23 @@ export function useBudget(userId: number | null) {
             .catch((error) => {
               console.error("Error fetching transactions:", error);
             });
+        }else{
+            console.log("No cycle data found for userId:", userId);
         }
       })
       .catch((error) => {
         console.error("Error fetching paycheck cycles:", error);
+      })
+      .finally(() => {
+        console.log("Finished fetching paycheck cycles for userId:", userId);
+        setLoading(false);
       });
   }, [userId]);
 
   function handleCycleCreate(data: PaycheckCycleData) {
     return createPaycheckCycle(data).then((savedCycle) => {
       setCycle(savedCycle);
+      setTransactions([]);
       setBalances({
         savings: savedCycle.savings,
         needs: savedCycle.needs,
@@ -198,5 +211,6 @@ export function useBudget(userId: number | null) {
     handleTransactionDelete,
     handleTransactionEdit,
     handleLogout,
+    isLoading,
   };
 }
