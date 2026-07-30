@@ -99,6 +99,7 @@ function App() {
 
         {activeScreen === "paycycle" && (
           <PayCycleScreen
+            userId={userId}
             cycle={cycle}
             onStartNewCycle={() => setShowNewCycleWizard(true)}
           />

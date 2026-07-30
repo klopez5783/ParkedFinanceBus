@@ -68,4 +68,32 @@ export async function updatePaycheckCycle(id: number, data: PaycheckCycleData) {
   return res.json();
 }
 
+export async function deletePaycheckCycle(id: number) {
+  const res = await fetch(`${API_BASE}/api/PaycheckCycles/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete paycheck cycle");
+  }
+}
+
+export async function deleteTransactionsByCycleId(cycleId: number) {
+  const res = await fetch(`${API_BASE}/api/Transactions/cycle/${cycleId}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete transactions for the cycle");
+  }
+}
+
+export async function getAllUserPaycheckCycles(userId: number) {
+  const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}/all`);  
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch all paycheck cycles");
+  }
+  return res.json();
+}
+
 

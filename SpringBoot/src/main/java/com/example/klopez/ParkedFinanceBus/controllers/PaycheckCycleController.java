@@ -45,7 +45,21 @@ public class PaycheckCycleController {
         existingCycle.setSavings(paycheckCycle.getSavings());
         existingCycle.setNeeds(paycheckCycle.getNeeds());
         existingCycle.setWants(paycheckCycle.getWants());
+        existingCycle.setPaycheckAmount(paycheckCycle.getPaycheckAmount());
+        existingCycle.setSavingsGoal(paycheckCycle.getSavingsGoal());
+        existingCycle.setEndDate(paycheckCycle.getEndDate());
+        existingCycle.setStartDate(paycheckCycle.getStartDate());
         return paycheckCycleRepository.save(existingCycle);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePaycheckCycle(@PathVariable Long id) {
+        paycheckCycleRepository.deleteById(id);
+    }
+
+    @GetMapping("/user/{uid}/all")
+    public List<PaycheckCycle> getAllPaycheckCyclesByUid(@PathVariable Long uid) {
+        return paycheckCycleRepository.findByUidOrderByCycleIdDesc(uid);
     }
     
 }

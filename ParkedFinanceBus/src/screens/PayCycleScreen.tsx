@@ -1,11 +1,20 @@
 import type { PaycheckCycleData } from "../interfaces/PaycheckCycle";
+import { getAllUserPaycheckCycles } from "../services/paycheckCycleService";
+import { useEffect, useState } from "react";
 
 interface Props {
+  userId: number;
   cycle: PaycheckCycleData;
   onStartNewCycle: () => void;
 }
 
-export default function PayCycleScreen({ cycle, onStartNewCycle }: Props) {
+export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props) {
+  const [allCycles, setAllCycles] = useState<PaycheckCycleData[]>([]);
+
+  useEffect(() => {
+    getAllUserPaycheckCycles(userId).then(setAllCycles);
+  }, [userId]);
+
   const formatDate = (d: string) => new Date(d).toLocaleDateString();
 
   return (
@@ -13,7 +22,9 @@ export default function PayCycleScreen({ cycle, onStartNewCycle }: Props) {
       <h1 className="text-3xl font-bold text-text text-center">Pay Cycle</h1>
 
       <div className="bg-surface rounded-2xl p-5 flex flex-col gap-3">
-        <h2 className="text-subText text-xs uppercase tracking-widest font-semibold">Current Cycle</h2>
+        <h2 className="text-subText text-xs uppercase tracking-widest font-semibold">
+          Current Cycle
+        </h2>
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Period</span>
@@ -24,29 +35,39 @@ export default function PayCycleScreen({ cycle, onStartNewCycle }: Props) {
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Paycheck</span>
-          <span className="text-text font-semibold">${cycle.paycheckAmount.toFixed(2)}</span>
+          <span className="text-text font-semibold">
+            ${cycle.paycheckAmount.toFixed(2)}
+          </span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Savings Goal</span>
-          <span className="text-text font-semibold">${cycle.savingsGoal.toFixed(2)}</span>
+          <span className="text-text font-semibold">
+            ${cycle.savingsGoal.toFixed(2)}
+          </span>
         </div>
 
         <div className="h-px bg-divider my-1" />
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Savings</span>
-          <span className="text-text font-semibold">${cycle.savings.toFixed(2)}</span>
+          <span className="text-text font-semibold">
+            ${cycle.savings.toFixed(2)}
+          </span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Needs</span>
-          <span className="text-text font-semibold">${cycle.needs.toFixed(2)}</span>
+          <span className="text-text font-semibold">
+            ${cycle.needs.toFixed(2)}
+          </span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-mutedText text-sm">Wants</span>
-          <span className="text-text font-semibold">${cycle.wants.toFixed(2)}</span>
+          <span className="text-text font-semibold">
+            ${cycle.wants.toFixed(2)}
+          </span>
         </div>
       </div>
 

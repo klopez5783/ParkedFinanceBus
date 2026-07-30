@@ -58,4 +58,11 @@ public class TransactionController {
         return ResponseEntity.noContent().build();
     }
 
+    //delete by cycleId
+    @DeleteMapping("/cycle/{cycleId}")
+    public ResponseEntity<Void> deleteTransactionsByCycleId(@PathVariable Long cycleId) {
+        transactionRepository.deleteByCycleId(cycleId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
