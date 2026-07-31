@@ -12,7 +12,11 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
   const [allCycles, setAllCycles] = useState<PaycheckCycleData[]>([]);
 
   useEffect(() => {
-    getAllUserPaycheckCycles(userId).then(setAllCycles);
+    getAllUserPaycheckCycles(userId).then(data => {
+      setAllCycles(data);
+    }).catch(error => {
+      console.error("Error fetching all paycheck cycles:", error);
+    });
   }, [userId]);
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString();

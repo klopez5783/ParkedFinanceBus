@@ -3,7 +3,7 @@ import type { Balances } from "../interfaces/Balances";
 import type { Transaction } from "../interfaces/Transaction";
 import type { PaycheckCycleData } from "../interfaces/PaycheckCycle";
 import {
-  getPaycheckCycles,
+  getTopPaycheckCycle,
   createPaycheckCycle,
   updatePaycheckCycle,
 } from "../services/paycheckCycleService";
@@ -33,9 +33,8 @@ export function useBudget(userId: number | null) {
 
     console.log("Fetching paycheck cycles for userId:", userId);
 
-    getPaycheckCycles(userId)
+    getTopPaycheckCycle(userId)
       .then((data) => {
-        console.log("Fetched paycheck cycles data:", data);
         if (data) {
           setCycle(data);
           console.log("Fetched cycle data:", data);

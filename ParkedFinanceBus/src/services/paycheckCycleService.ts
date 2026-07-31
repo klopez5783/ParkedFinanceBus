@@ -1,11 +1,8 @@
 import API_BASE from "./api";
 import type { PaycheckCycleData }  from "../interfaces/PaycheckCycle";
 
-export async function getPaycheckCycles(userId: number) {
-  console.log("Fetching paycheck cycles for userId:", userId);
+export async function getTopPaycheckCycle(userId: number) {
   const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}`);
-  console.log("Response from paycheck cycles fetch:", res);
-
   if (res.status === 204) {
     return null;  // no cycle exists
   }
@@ -88,7 +85,7 @@ export async function deleteTransactionsByCycleId(cycleId: number) {
 }
 
 export async function getAllUserPaycheckCycles(userId: number) {
-  const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}/all`);  
+  const res = await fetch(`${API_BASE}/api/PaycheckCycles/user/${userId}/all`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch all paycheck cycles");
