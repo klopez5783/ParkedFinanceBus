@@ -182,6 +182,24 @@ export function useBudget(userId: number | null) {
     }
   }
 
+  function handleSetActiveCycle(selected: PaycheckCycleData) {
+    setCycle(selected);
+    setBalances({
+      savings: selected.savings,
+      needs: selected.needs,
+      wants: selected.wants,
+    });
+    setSavingsGoal(selected.savingsGoal);
+   getTransactionsByCycle(selected.cycleId!)
+      .then((transactionsData) => {
+        setTransactions(transactionsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching transactions for selected cycle:", error);
+      });
+    
+  }
+
   function handleLogout() {
     setCycle(null);
     setBalances({ savings: 0, needs: 0, wants: 0 });
@@ -211,5 +229,6 @@ export function useBudget(userId: number | null) {
     handleTransactionEdit,
     handleLogout,
     isLoading,
+    handleSetActiveCycle,
   };
 }

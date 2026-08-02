@@ -93,4 +93,14 @@ export async function getAllUserPaycheckCycles(userId: number) {
   return res.json();
 }
 
+export async function getTransactionsByCycleID(cycleId: number) {
+  const res = await fetch(`${API_BASE}/api/Transactions/cycle/${cycleId}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch transactions for the cycle");
+  }
+  console.log("Fetched transactions for cycleId:", cycleId, "Response:", res);
+
+  return res.json();
+}
+
 

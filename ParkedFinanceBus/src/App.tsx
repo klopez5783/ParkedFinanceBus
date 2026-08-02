@@ -30,6 +30,7 @@ function App() {
     handleTransactionEdit,
     handleLogout,
     isLoading,
+    handleSetActiveCycle,
   } = useBudget(userId);
 
   if (userId === null) {
@@ -102,6 +103,7 @@ function App() {
             userId={userId}
             cycle={cycle}
             onStartNewCycle={() => setShowNewCycleWizard(true)}
+            onSetActive={handleSetActiveCycle}
           />
         )}
 

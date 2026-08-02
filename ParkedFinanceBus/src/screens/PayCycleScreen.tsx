@@ -3,7 +3,7 @@ import {
   getAllUserPaycheckCycles,
   updatePaycheckCycle,
   deletePaycheckCycle,
-  deleteTransactionsByCycleId,
+  deleteTransactionsByCycleId
 } from "../services/paycheckCycleService";
 import { useEffect, useState } from "react";
 
@@ -11,9 +11,10 @@ interface Props {
   userId: number;
   cycle: PaycheckCycleData;
   onStartNewCycle: () => void;
+  onSetActive: (cycle: PaycheckCycleData) => void;
 }
 
-export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props) {
+export default function PayCycleScreen({ userId, cycle, onStartNewCycle, onSetActive }: Props) {
   const [allCycles, setAllCycles] = useState<PaycheckCycleData[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -27,6 +28,13 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
       .then(setAllCycles)
       .catch((error) => console.error("Error fetching all paycheck cycles:", error));
   }, [userId]);
+
+  async function handleSetActive(c: PaycheckCycleData) {
+  onSetActive(c);
+  setAllCycles(prev => [c, ...prev.filter(x => x.cycleId !== c.cycleId)]);
+  setExpandedId(null);
+}
+
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString();
 
@@ -70,6 +78,12 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
           <span className="text-mutedText text-sm">Period</span>
           <span className="text-text font-semibold text-sm">
             {formatDate(cycle.startDate)} → {formatDate(cycle.endDate)}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-mutedText text-sm">Cycle ID:</span>
+          <span className="text-text font-semibold text-sm">
+            {cycle.cycleId}
           </span>
         </div>
         <div className="flex justify-between items-center">
@@ -122,6 +136,7 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
                     {formatDate(c.startDate)} → {formatDate(c.endDate)}
                   </span>
                   <span className="text-mutedText text-xs">Paycheck: ${c.paycheckAmount.toFixed(2)}</span>
+                  <span className="text-mutedText text-xs">Cycle ID: {c.cycleId}</span>
                 </div>
                 <span className="text-mutedText text-lg">{expandedId === c.cycleId ? "▲" : "▼"}</span>
               </button>
@@ -194,7 +209,7 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
                       </div> */}
                       <div className="flex justify-between">
                         <span className="text-mutedText text-sm">Total Savings</span>
-                        <span className="text-text font-semibold">${(c.savingsGoal - c.savings).toFixed(2)}</span>
+                        <span className="text-text font-semibold">${(c.savingsGoal + c.savings).toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-mutedText text-sm">Needs</span>
@@ -216,6 +231,12 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle }: Props
                           className="flex-1 py-2 rounded-xl bg-danger text-white font-semibold active:opacity-80"
                         >
                           Delete
+                        </button>
+                        <button
+                          onClick={() => handleSetActive(c)}
+                          className="flex-1 py-2 rounded-xl bg-success text-white font-semibold active:opacity-80"
+                        >
+                          Set as Active
                         </button>
                       </div>
                     </>
