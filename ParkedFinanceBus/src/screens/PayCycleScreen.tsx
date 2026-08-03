@@ -199,14 +199,6 @@ export default function PayCycleScreen({ userId, cycle, onStartNewCycle, onSetAc
                     </>
                   ) : (
                     <>
-                      {/* <div className="flex justify-between">
-                        <span className="text-mutedText text-sm">Savings Goal</span>
-                        <span className="text-text font-semibold">${c.savingsGoal.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-mutedText text-sm">Savings</span>
-                        <span className="text-text font-semibold">${c.savings.toFixed(2)}</span>
-                      </div> */}
                       <div className="flex justify-between">
                         <span className="text-mutedText text-sm">Total Savings</span>
                         <span className="text-text font-semibold">${(c.savingsGoal + c.savings).toFixed(2)}</span>

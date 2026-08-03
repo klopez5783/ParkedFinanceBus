@@ -18,7 +18,6 @@ export default function NewTransactionModal({
   const [category, setCategory] = useState("savings");
   const [deposit, setDeposit] = useState(false);
   const [label, setLabel] = useState("");
-  const [cycle, setCycle] = useState<{ cycleId: number } | null>(null);
 
   const handleSubmit = () => {
     console.log("Submitting transaction:", { amount, category, label });
@@ -34,7 +33,7 @@ export default function NewTransactionModal({
       wants: category === "wants" ? signedAmount : 0,
       description: label || "Untitled Transaction",
       deposit: deposit,
-      cycleID: cycle?.cycleId ?? 0,
+      cycleID: 0,
     });
   };
 

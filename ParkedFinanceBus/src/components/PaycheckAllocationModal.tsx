@@ -8,10 +8,6 @@ const CATEGORIES = [
 
 type CategoryKey = "savings" | "needs" | "wants";
 
-interface Props {
-  onSubmit: (balances: Record<CategoryKey, number>) => void;
-}
-
 export default function PaycheckAllocationModal({
   onSubmit,
   onClose,
